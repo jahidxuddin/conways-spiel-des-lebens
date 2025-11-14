@@ -6,19 +6,49 @@
 
 record GameOfLife(boolean[][] field) {
     String show() {
-        return "";
+      var sb  = new StringBuilder();
+      for (int i = 0; i < field.length; i++){
+        for (int j = 0; j < field[0].length; j++){
+          sb.append(field[i][j] ? '\u2588' : ' ');
+        }
+        sb.append('\n');
+      }
+      return sb.toString(); // TODO
+      
     }
 
     int population() {
-        return 0;
+      int count = 0;
+      for (int i = 0; i < field.length; i++){
+        for  (int j = 0; j < field[0].length; j++) {
+          if (field[i][j]) count++;
+        }
+      }
+      return count;
+      
     }
 
     boolean extinct() {
-        return false;
+      
+      return population() == 0;
+      
     }
 
     static GameOfLife fromString(String m) {
-        return new GameOfLife(null);
+      var lines = m.split("\n");
+      int rows = lines.length;
+      int cols = lines[0].length();
+      
+      boolean[][] f = new boolean[rows][cols];
+      
+      for (int i = 0; i < rows; i++){
+        for (int j = 0; j < cols; j++){
+          char c = lines[i].charAt(j);
+          f[i][j] = (c != '.');
+        }
+      }
+      return new GameOfLife(f); // TODO
+      
     }
 
     static String ex1 = """
@@ -58,6 +88,11 @@ record GameOfLife(boolean[][] field) {
     }
 
     public static void main(String... args) {
-        GameOfLife.fromString(GameOfLife.ex1).play();
+      
+      
+      //GameOfLife.fromString(GameOfLife.ex1).play();
+      System.out.println(GameOfLife.fromString(GameOfLife.ex1).show());
+      
+      
     }
 }
