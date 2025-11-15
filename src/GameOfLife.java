@@ -5,52 +5,6 @@
  */
 
 record GameOfLife(boolean[][] field) {
-    String show() {
-      var sb  = new StringBuilder();
-      for (int i = 0; i < field.length; i++){
-        for (int j = 0; j < field[0].length; j++){
-          sb.append(field[i][j] ? '\u2588' : ' ');
-        }
-        sb.append('\n');
-      }
-      return sb.toString(); // TODO
-      
-    }
-
-    int population() {
-      int count = 0;
-      for (int i = 0; i < field.length; i++){
-        for  (int j = 0; j < field[0].length; j++) {
-          if (field[i][j]) count++;
-        }
-      }
-      return count;
-      
-    }
-
-    boolean extinct() {
-      
-      return population() == 0;
-      
-    }
-
-    static GameOfLife fromString(String m) {
-      var lines = m.split("\n");
-      int rows = lines.length;
-      int cols = lines[0].length();
-      
-      boolean[][] f = new boolean[rows][cols];
-      
-      for (int i = 0; i < rows; i++){
-        for (int j = 0; j < cols; j++){
-          char c = lines[i].charAt(j);
-          f[i][j] = (c != '.');
-        }
-      }
-      return new GameOfLife(f); // TODO
-      
-    }
-
     static String ex1 = """
             ..................
             ..................
@@ -64,13 +18,106 @@ record GameOfLife(boolean[][] field) {
             ..................
             ..................""";
 
+    String show() {
+        StringBuilder gameFieldBuilder = new StringBuilder();
+        for (boolean[] f1 : field) {
+            for (boolean f2 : f1) {
+                if (f2) {
+                    gameFieldBuilder.append("█");
+                } else {
+                    gameFieldBuilder.append(" ");
+                }
+            }
+            gameFieldBuilder.append("\n");
+        }
+        return gameFieldBuilder.toString();
+    }
+
+    int population() {
+        int sum = 0;
+        for (boolean[] f1 : field) {
+            for (boolean f2 : f1) {
+                if (f2) {
+                    sum++;
+                }
+            }
+        }
+        return sum;
+    }
+
+    boolean extinct() {
+        boolean extinct = false;
+        for (boolean[] f1 : field) {
+            for (boolean f2 : f1) {
+                if (f2) {
+                    extinct = true;
+                    break;
+                }
+            }
+        }
+        return extinct;
+    }
+
+    static GameOfLife fromString(String m) {
+        String[] lines = m.split("\n");
+        int height = lines.length;
+        int width = (height > 0) ? lines[0].length() : 0;
+
+        boolean[][] field = new boolean[height][width];
+
+        for (int i = 0; i < height; i++) {
+            String line = lines[i];
+            for (int j = 0; j < width; j++) {
+                if (j < line.length()) {
+                    field[i][j] = line.charAt(j) == '0';
+                }
+            }
+        }
+        return new GameOfLife(field);
+    }
 
     int anzahlBelegterNachbarn(int x, int y) {
-        return 0;
+        int amount = 0;
+
+        for (int i = x - 1; i <= x + 1; i++) {
+            for (int j = y - 1; j <= y + 1; j++) {
+                if (i == x && j == y) {
+                    continue;
+                }
+
+                if (i >= 0 && i < field.length && j >= 0 && j < field[0].length) {
+                    if (field[i][j]) {
+                        amount++;
+                    }
+                }
+            }
+        }
+        return amount;
     }
 
     GameOfLife nextGeneration() {
-        return new GameOfLife(field);
+        int height = field.length;
+        int width = (height > 0) ? field[0].length : 0;
+        boolean[][] nextField = new boolean[height][width];
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+
+                int anzahlBelegterNachbarn = anzahlBelegterNachbarn(i, j);
+                boolean istAmLeben = field[i][j];
+
+                if (istAmLeben) {
+                    if (anzahlBelegterNachbarn == 2 || anzahlBelegterNachbarn == 3) {
+                        nextField[i][j] = true;
+                    }
+                } else {
+                    if (anzahlBelegterNachbarn == 3) {
+                        nextField[i][j] = true;
+                    }
+                }
+            }
+        }
+        return new GameOfLife(nextField);
     }
 
     void waitAndClear() {
@@ -85,14 +132,20 @@ record GameOfLife(boolean[][] field) {
     void play() {
         var current = this;
 
+        while (true) {
+            waitAndClear();
+            System.out.println(current.show());
+
+            if (current.population() == 0) {
+                System.out.println("Alle Zellen sind ausgestorben.");
+                break;
+            }
+
+            current = current.nextGeneration();
+        }
     }
 
     public static void main(String... args) {
-      
-      
-      //GameOfLife.fromString(GameOfLife.ex1).play();
-      System.out.println(GameOfLife.fromString(GameOfLife.ex1).show());
-      
-      
+        GameOfLife.fromString(GameOfLife.ex1).play();
     }
 }
