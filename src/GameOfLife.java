@@ -120,7 +120,18 @@ record GameOfLife(boolean[][] field) {
     System.out.print("\033[H\033[2J");
     System.out.flush();
   }
-  
+
+    void playN(int generations) {
+        var current = this;
+
+        for (int g = 0; g < generations; g++) {
+            waitAndClear();
+            System.out.println("Generation " + g);
+            System.out.println(current.show());
+            current = current.nextGeneration();
+        }
+    }
+
   void play() {
     var current = this;
     
