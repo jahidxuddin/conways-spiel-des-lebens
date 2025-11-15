@@ -8,6 +8,8 @@
  */
 public class TestMain {
     public static void main (String[] args) {
+      
+      System.out.println(GameOfLife.fromString(GameOfLife.ex1).show());
         /**
          * -- Beispiel --
          * In der vorgegebenen Datei hast du diesen Code geschrieben:
@@ -18,7 +20,7 @@ public class TestMain {
          *   }
          * }
          */
-
+      
          // Dies könntest du hier nun so testen:
          // System.out.println("Das Ergebnis ist: " + First.fortyTwo());
     }
