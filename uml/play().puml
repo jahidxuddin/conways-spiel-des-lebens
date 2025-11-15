@@ -1,0 +1,20 @@
+@startuml
+
+actor User
+
+User -> GameOfLife : play()
+
+loop Jede Generation
+    GameOfLife -> GameOfLife : waitAndClear()
+    GameOfLife -> GameOfLife : show()
+    GameOfLife -> GameOfLife : population()
+
+    alt population == 0
+        GameOfLife -> User : "Alle Zellen sind ausgestorben."
+        break
+    end
+
+    GameOfLife -> GameOfLife : nextGeneration()
+end
+
+@enduml

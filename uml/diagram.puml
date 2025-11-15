@@ -1,0 +1,14 @@
+@startuml
+class GameOfLife {
+    - boolean[][] field
+    + String show()
+    + int population()
+    + boolean extinct()
+    + static GameOfLife fromString(String)
+    + int anzahlBelegterNachbarn(int, int)
+    + GameOfLife nextGeneration()
+    + void waitAndClear()
+    + void play()
+    + static void main(String...)
+}
+@enduml

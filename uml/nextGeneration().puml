@@ -1,0 +1,36 @@
+@startuml
+
+GameOfLife -> GameOfLife : nextGeneration()
+activate GameOfLife
+
+loop Für jede Zelle (i,j)
+    GameOfLife -> GameOfLife : anzahlBelegterNachbarn(i, j)
+    GameOfLife <-- GameOfLife : nachbarn
+
+    alt Zelle lebt
+        alt 2 oder 3 Nachbarn
+            note over GameOfLife
+                lebt weiter
+            end note
+        else
+            note over GameOfLife
+                stirbt
+            end note
+        end
+    else
+        alt genau 3 Nachbarn
+            note over GameOfLife
+                wird lebendig
+            end note
+        else
+            note over GameOfLife
+                bleibt tot
+            end note
+        end
+    end
+end
+
+GameOfLife --> GameOfLife : new GameOfLife(nextField)
+deactivate GameOfLife
+
+@enduml
