@@ -1,37 +1,20 @@
 @startuml
-'https://plantuml.com/activity-diagram-beta
+title Ablauf der play()-Methode
 
 start
-:ClickServlet.handleRequest();
-:new page;
-if (Page.onSecurityCheck) then (true)
-  :Page.onInit();
-  if (isForward?) then (no)
-    :Process controls;
-    if (continue processing?) then (no)
-      stop
+
+:current = this;
+
+repeat
+    :waitAndClear();
+    :System.out.println( current.show() );
+
+    if ( current.population() == 0 ) then (ja)
+        :System.out.println("Alle Zellen sind ausgestorben.");
+        stop
     endif
 
-    if (isPost?) then (yes)
-      :Page.onPost();
-    else (no)
-      :Page.onGet();
-    endif
-    :Page.onRender();
-  endif
-else (false)
-endif
-
-if (do redirect?) then (yes)
-  :redirect process;
-else
-  if (do forward?) then (yes)
-    :Forward request;
-  else (no)
-    :Render page template;
-  endif
-endif
-
-stop
+    :current = current.nextGeneration();
+repeat while (true)
 
 @enduml

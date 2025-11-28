@@ -1,14 +1,25 @@
 @startuml
+title Klassendiagramm: GameOfLife
+
 class GameOfLife {
     - boolean[][] field
+
+    --
+    + GameOfLife(boolean[][] field)
+    --
     + String show()
     + int population()
     + boolean extinct()
-    + static GameOfLife fromString(String)
-    + int anzahlBelegterNachbarn(int, int)
+    + static GameOfLife fromString(String m)
+    + int anzahlBelegterNachbarn(int x, int y)
     + GameOfLife nextGeneration()
     + void waitAndClear()
     + void play()
-    + static void main(String...)
+    + void playN(int generations)
+    + static void main(String... args)
+
+    --
+    {static} String ex1
 }
+
 @enduml

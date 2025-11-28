@@ -1,37 +1,83 @@
 @startuml
-'https://plantuml.com/activity-diagram-beta
+title Gesamtsystem-Diagramm – GameOfLife Ablauf (detailliert)
+
+skinparam shadowing false
+skinparam activityDiamondStyle rounded
 
 start
-:ClickServlet.handleRequest();
-:new page;
-if (Page.onSecurityCheck) then (true)
-  :Page.onInit();
-  if (isForward?) then (no)
-    :Process controls;
-    if (continue processing?) then (no)
-      stop
+
+:'Spiel starten';
+note right
+Der User oder die main-Methode startet das Spiel.
+Das Anfangsmuster ex1 wird eingelesen.
+end note
+
+:GameOfLife.fromString(ex1);
+
+partition "Initialisierung (fromString)" {
+    :String in Zeilen splitten;
+    :Breite & Höhe bestimmen;
+    :2D-boolean[][] field erzeugen;
+
+    :Jede Zeile/jedes Zeichen prüfen;
+    if (Zeichen == '0') then (lebt)
+        :field[i][j] = true;
+    else (.)
+        :field[i][j] = false;
     endif
+}
 
-    if (isPost?) then (yes)
-      :Page.onPost();
-    else (no)
-      :Page.onGet();
-    endif
-    :Page.onRender();
-  endif
-else (false)
-endif
+:current = neues GameOfLife(field);
 
-if (do redirect?) then (yes)
-  :redirect process;
-else
-  if (do forward?) then (yes)
-    :Forward request;
-  else (no)
-    :Render page template;
-  endif
-endif
+repeat
+    partition "Ausgabe" {
+        :waitAndClear();
+        note right
+        Leert den Bildschirm und wartet,
+        damit Animation sichtbar wird.
+        end note
 
-stop
+        :current.show() anzeigen;
+        note right
+        show() wandelt boolean[][] in eine Text-Grid-Darstellung um.
+        end note
+    }
+
+    partition "Analyse" {
+        :population = current.population();
+        note right
+        population() zählt alle true-Felder (lebende Zellen).
+        end note
+
+        if (population == 0) then (ausgestorben)
+            :\"Alle Zellen sind ausgestorben\" ausgeben;
+            stop
+        endif
+    }
+
+    partition "Generationsberechnung" {
+        :nextField = neues boolean[][];
+
+        :Für jede Zelle (i,j);
+        :Nachbarn = anzahlBelegterNachbarn(i,j);
+
+        if (Zelle lebt) then (alive)
+            if (Nachbarn == 2 oder 3) then (überlebt)
+                :nextField[i][j] = true;
+            else (stirbt)
+                :nextField[i][j] = false;
+            endif
+        else (tot)
+            if (Nachbarn == 3) then (geboren)
+                :nextField[i][j] = true;
+            else
+                :nextField[i][j] = false;
+            endif
+        endif
+    }
+
+    :current = new GameOfLife(nextField);
+
+repeat while (true)
 
 @enduml
